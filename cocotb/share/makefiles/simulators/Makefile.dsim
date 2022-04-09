@@ -51,7 +51,7 @@ COMPILE_ARGS += -sv +acc+rwsb # Default to latest SystemVerilog standard
 
 # Compilation phase
 $(SIM_BUILD)/image.so: $(SIM_BUILD) $(VERILOG_SOURCES) $(CUSTOM_COMPILE_DEPS)
-	$(CMD) +acc+rwcb -genimage image -pli_lib libcocotbvpi.so +define+COCOTB_SIM=1 -top $(TOPLEVEL) $(COMPILE_ARGS) $(EXTRA_ARGS) $(VERILOG_SOURCES)
+	$(CMD) +acc+rwcb -genimage image -pli_lib libcocotbvpi_dsim.so +define+COCOTB_SIM=1 -top $(TOPLEVEL) $(COMPILE_ARGS) $(EXTRA_ARGS) $(VERILOG_SOURCES)
 
 # Execution phase
 
@@ -71,7 +71,7 @@ $(COCOTB_RESULTS_FILE): $(SIM_BUILD)/image.so $(CUSTOM_SIM_DEPS) $(COCOTB_LIBS) 
 
 	PYTHONPATH=$(LIB_DIR):$(PWD):$(NEW_PYTHONPATH) $(LIB_LOAD) MODULE=$(MODULE) \
         TESTCASE=$(TESTCASE) TOPLEVEL=$(TOPLEVEL) TOPLEVEL_LANG=$(TOPLEVEL_LANG) COCOTB_SIM=1 \
-        dsim -pli_lib libcocotbvpi.so -linebuf -trace-vpi -image image $(SIM_ARGS) $(EXTRA_ARGS) $(PLUSARGS)
+        dsim -pli_lib libcocotbvpi_dsim.so -linebuf -trace-vpi -image image $(SIM_ARGS) $(EXTRA_ARGS) $(PLUSARGS)
 
 	# check that the file was actually created, since we can't set an exit code from cocotb
 	test -f $(COCOTB_RESULTS_FILE)
@@ -81,7 +81,7 @@ debug: $(SIM_BUILD)/sim.vvp $(CUSTOM_SIM_DEPS) $(COCOTB_LIBS)
 
 	PYTHONPATH=$(LIB_DIR):$(PWD):$(NEW_PYTHONPATH) $(LIB_LOAD) MODULE=$(MODULE) \
         TESTCASE=$(TESTCASE) TOPLEVEL=$(TOPLEVEL) TOPLEVEL_LANG=$(TOPLEVEL_LANG) COCOTB_SIM=1 \
-        gdb --args $(DSIM_BIN_DIR)/vvp -M $(LIB_DIR) -m libcocotbvpi $(SIM_ARGS) $(EXTRA_ARGS) $(SIM_BUILD)/sim.vvp $(PLUSARGS)
+        gdb --args $(DSIM_BIN_DIR)/vvp -M $(LIB_DIR) -m libcocotbvpi_dsim $(SIM_ARGS) $(EXTRA_ARGS) $(SIM_BUILD)/sim.vvp $(PLUSARGS)
 
 	# check that the file was actually created, since we can't set an exit code from cocotb
 	test -f $(COCOTB_RESULTS_FILE)
